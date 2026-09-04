@@ -4,7 +4,7 @@
 
 body {
   margin: 0;
-  background: #D3BC8D;
+  background: #d3bc8d;
   color: #222;
   font-family: "Helvetica Neue", Arial, sans-serif;
 }
@@ -26,6 +26,15 @@ main {
 
 .sidebar {
   width: 100%;
+}
+
+.portfolio-sidebar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.portfolio-main {
+  grid-template-columns: minmax(420px, 1.6fr) minmax(220px, 1fr);
 }
 
 .content {
@@ -82,7 +91,7 @@ h2 {
   font-size: 1rem;
   font-weight: 600;
   padding: 10px 20px;
-  background: #D3BC8D;
+  background: #d3bc8d;
   border: 1px solid #ffffff;
   border-radius: 100px;
   transition:
@@ -94,7 +103,7 @@ h2 {
 
 #interests li:hover {
   background: #000000;
-  color: #D3BC8D;
+  color: #d3bc8d;
   border-color: #000000;
   transform: translateY(-2px);
 }
@@ -126,7 +135,7 @@ nav {
   align-items: center;
   margin-bottom: 48px;
   padding: 16px 24px;
-  background:#D3BC8D;
+  background: #d3bc8d;
   border: 1px solid #ffffff;
   border-radius: 12px;
 }
@@ -161,13 +170,26 @@ nav h1 {
 }
 
 .nav-li a:hover {
-  background: #D3BC8D;
+  background: #d3bc8d;
   color: #000000;
 }
 
 /* Portfolio styles */
 .content h1 {
   color: black;
+}
+
+.portfolio-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.portfolio-heading img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 #portfolio {
@@ -194,15 +216,18 @@ nav h1 {
   padding: 16px 20px;
   font-size: 1.1rem;
   font-weight: 500;
-  background: #D3BC8D;
+  background: #d3bc8d;
   border: 1px solid #ffffff;
   border-radius: 12px;
-  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
 }
 
 #portfolio a:hover {
   background: #000000;
-  color: #fff;
+  color: #d3bc8d;
   transform: translateX(4px);
 }
 
