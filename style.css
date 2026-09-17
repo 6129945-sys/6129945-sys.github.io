@@ -5,7 +5,7 @@
 body {
   margin: 0;
   background: #d3bc8d;
-  color: #222;
+  color: #000000;
   font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -176,7 +176,7 @@ nav h1 {
 
 /* Portfolio styles */
 .content h1 {
-  color: black;
+  color: rgb(0, 0, 0);
 }
 
 .portfolio-heading {
