@@ -41,6 +41,29 @@
       white-space: nowrap;
 
     }
+
+    .game-message {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      padding: 12px 20px;
+      border: 2px solid black;
+      background-color: #D3BC8D;
+      color: black;
+      font-size: 32px;
+      text-align: center;
+    }
+
+    .restart-button {
+      display: block;
+      margin: 12px auto 0;
+      padding: 8px 16px;
+      font-size: 18px;
+      cursor: pointer;
+    }
   </style>
   <!-- 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
 </head>
@@ -48,6 +71,10 @@
 <body class="board">
   <!-- HTML for the box -->
   <div class="box">?</div>
+  <div class="game-message">
+    <div>Game Over!</div>
+    <button class="restart-button" type="button">Restart</button>
+  </div>
 
   <script>
     (function () {
@@ -60,8 +87,13 @@
 
       var box = jQuery(".box"); // reference to the HTML .box element
       var board = jQuery(".board"); // reference to the HTML .board element
+      var gameMessage = jQuery(".game-message");
       var boardWidth = board.width(); // the maximum X-Coordinate of the screen
       var boardHeight = board.height();
+      var gameOver = false;
+      var gameFrozen = false;
+      var dangerousCorner = Math.floor(Math.random() * 4);
+      var gameTimer = setInterval(update, 50);
 
       // update the boardWidth variable when the window is resized
       jQuery(window).on("resize", function () {
@@ -69,16 +101,37 @@
         boardHeight = board.height();
       });
 
-      // Every 50 milliseconds, call the update Function (see below)
-      setInterval(update, 50);
-
       // Every time the box is clicked, call the handleBoxClick Function (see below)
       box.on("click", handleBoxClick);
+      jQuery(".restart-button").on("click", restartGame);
 
       // moves the Box to a new position on the screen
       function moveBoxTo(newPositionX, newPositionY) {
         box.css("left", newPositionX);
         box.css("top", newPositionY);
+      }
+
+      function endGame(message) {
+        gameOver = true;
+        clearInterval(gameTimer);
+        gameMessage.children("div").first().text(message || "Game Over!");
+        gameMessage.show();
+      }
+
+      function restartGame() {
+        points = 0;
+        speed = 10;
+        directionX = 1;
+        directionY = 1;
+        gameFrozen = false;
+        dangerousCorner = Math.floor(Math.random() * 4);
+        positionX = 0;
+        positionY = 100;
+        gameOver = false;
+        box.text("?");
+        moveBoxTo(positionX, positionY);
+        gameMessage.hide();
+        gameTimer = setInterval(update, 50);
       }
 
       //////////////////////////////////////////////////////////////////
@@ -100,8 +153,12 @@
        * If the box drifts off the screen, turn it around!
        */
       function update() {
-        var maxPositionX = boardWidth - box.outerWidth();
-        var maxPositionY = boardHeight - box.outerHeight();
+        if (gameOver || gameFrozen) {
+          return;
+        }
+
+        var maxPositionX = Math.max(0, boardWidth - box.outerWidth());
+        var maxPositionY = Math.max(0, boardHeight - box.outerHeight());
 
         positionX += speed * directionX;
         positionY += speed * directionY;
@@ -123,6 +180,20 @@
         }
 
         moveBoxTo(positionX, positionY);
+
+        var atHorizontalEdge = positionX === 0 || positionX === maxPositionX;
+        var atVerticalEdge = positionY === 0 || positionY === maxPositionY;
+        if (atHorizontalEdge && atVerticalEdge) {
+          var cornerIndex = positionY === 0
+            ? (positionX === 0 ? 0 : 1)
+            : (positionX === 0 ? 2 : 3);
+
+          if (cornerIndex === dangerousCorner && points >= 20) {
+            endGame();
+          } else {
+            gameFrozen = true;
+          }
+        }
       }
 
       /**
@@ -132,8 +203,14 @@
        * - increase the speed
        */
       function handleBoxClick() {
-        var maxPositionX = boardWidth - box.outerWidth();
-        var maxPositionY = boardHeight - box.outerHeight();
+        if (gameOver) {
+          return;
+        }
+
+        gameFrozen = false;
+        dangerousCorner = Math.floor(Math.random() * 4);
+        var maxPositionX = Math.max(0, boardWidth - box.outerWidth());
+        var maxPositionY = Math.max(0, boardHeight - box.outerHeight());
 
         positionX = Math.random() * Math.max(0, maxPositionX);
         positionY = Math.random() * Math.max(0, maxPositionY);
@@ -142,6 +219,10 @@
         moveBoxTo(positionX, positionY);
         points = points + 1;
         box.text(points);
+        if (points >= 20) {
+          endGame("You Win!");
+          return;
+        }
         speed = 3 * points + 10;
 
 
